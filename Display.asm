@@ -14,7 +14,7 @@ L_DisTime_Min:
 	and		#$f0
 	jsr		L_LSR_4Bit
 	ldx		#lcd_d2
-	jsr		L_Dis_7Bit_DigitDot
+	jsr		L_Dis_6Bit_DigitDot
 	rts	
 
 L_DisTime_Hour:									; 显示小时
@@ -67,7 +67,7 @@ L_DisAlarm_Min:
 	and		#$f0
 	jsr		L_LSR_4Bit
 	ldx		#lcd_d2
-	jsr		L_Dis_7Bit_DigitDot
+	jsr		L_Dis_6Bit_DigitDot
 	rts	
 	rts	
 
@@ -116,7 +116,7 @@ F_UnDisplay_D0_1:								; 闪烁时取消显示用的函数
 F_UnDisplay_D2_3:								; 闪烁时取消显示用的函数
 	lda		#10
 	ldx		#lcd_d2
-	jsr		L_Dis_7Bit_DigitDot
+	jsr		L_Dis_6Bit_DigitDot
 	lda		#10
 	ldx		#lcd_d3
 	jsr		L_Dis_7Bit_DigitDot

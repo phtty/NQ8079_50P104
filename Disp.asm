@@ -76,6 +76,45 @@ L_Inc_Dis_Index_Digit_7bit:
 
 
 
+; 6bit数显	lcd_d2
+L_Dis_6Bit_DigitDot:
+	stx		P_Temp+1					; 偏移量暂存进P_Temp+3, 腾出X来做变址寻址
+	sta		P_Temp						; 将显示的数字转换为内存偏移量
+
+	tax
+	lda		Table_Digit_6bit,x			; 将显示的数字通过查表找到对应的段码存进A
+	sta		P_Temp						; 暂存段码值到P_Temp
+
+	ldx		P_Temp+1					; 将偏移量取回
+	stx		P_Temp+1					; 暂存偏移量到P_Temp+3
+	lda		#6
+	sta		P_Temp+2					; 设置显示段数为6
+L_Judge_Dis_6Bit_DigitDot				; 显示循环的开始
+	ldx		P_Temp+1					; 取回偏移量作为索引
+	lda		Lcd_bit,x					; 查表定位目标段的bit位
+	sta		P_Temp+3	
+	lda		Lcd_byte,x					; 查表定位目标段的显存地址
+	tax
+	ror		P_Temp						; 循环右移取得目标段是亮或者灭
+	bcc		L_CLR_6bit					; 当前段的值若是0则进清点子程序
+	lda		LCD_RamAddr,x				; 将目标段的显存的特定bit位置1来打亮
+	ora		P_Temp+3
+	sta		LCD_RamAddr,x
+	bra		L_Inc_Dis_Index_Prog_6bit	; 跳转到显示索引增加的子程序。
+L_CLR_6bit:	
+	lda		LCD_RamAddr,x				; 加载LCD RAM的地址
+	ora		P_Temp+3					; 将COM和SEG信息与LCD RAM地址进行逻辑或操作
+	eor		P_Temp+3					; 进行异或操作，用于清除对应的段。
+	sta		LCD_RamAddr,x				; 将结果写回LCD RAM，清除对应位置。
+L_Inc_Dis_Index_Prog_6bit:
+	inc		P_Temp+1					; 递增偏移量，处理下一个段
+	dec		P_Temp+2					; 递减剩余要显示的段数
+	bne		L_Judge_Dis_6Bit_DigitDot	; 剩余段数为0则返回
+	rts
+
+
+
+
 ;===========================================================
 ;@brief		显示1或者不显示
 ;@para:		A = 0~1
@@ -135,29 +174,11 @@ Table_Digit_7bit:
 	.byte	$6f	; 9
 	.byte	$00	; undisplay
 
-Table_Word_7bit:
-	.byte	$61 ; c 0
-	.byte	$71	; F 1
-	.byte	$5c	; o 2
-	.byte	$37	; N 3
-	.byte	$77	; A 4
-	.byte	$5e	; d 5
-	.byte	$73	; p 6
-	.byte	$76	; H 7
-	.byte	$50	; r 8
-	.byte	$40	; - 9
-
-Table_Week_7bit:
-	.byte	$01	; SUN
-	.byte	$02	; MON
-	.byte	$04	; TUE
-	.byte	$08	; WED
-	.byte	$10	; THU
-	.byte	$20	; FRI
-	.byte	$40	; SAT
+Table_Digit_6bit:
+	.byte	$1f	; 0
+	.byte	$06	; 1
+	.byte	$2b	; 2
+	.byte	$27	; 3
+	.byte	$36	; 4
+	.byte	$35	; 5
 	.byte	$00	; undisplay
-
-Table_COMx_SEL:
-	.byte	$f7	; COM0_SEL
-	.byte	$fb	; COM1_SEL
-	.byte	$fd	; COM2_SEL
