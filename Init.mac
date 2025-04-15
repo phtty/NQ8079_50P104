@@ -1,0 +1,98 @@
+F_Init_SystemRam	MACRO						; 系统内存初始化
+	lda		#001B
+	sta		Sys_Status_Flag
+
+	lda		#12
+	sta		R_Time_Hour
+	lda		#00
+	sta		R_Time_Min
+	lda		#00
+	sta		R_Time_Sec
+
+	lda		#06
+	sta		R_Alarm_Hour
+	lda		#00
+	sta		R_Alarm_Min
+
+	smb0	Clock_Flag							; 上电为12h模式
+
+	ENDM
+
+
+F_Beep_Init		MACRO
+	PB2_PB2_COMS								; PP(PB2)初始化成IO输出，避免漏电
+	rmb2	PB
+
+	rmb2    DIVC								; 配置蜂鸣音调频率(占空比3/4)
+    rmb3    DIVC
+	rmb7	DIVC
+	rmb1	AUDCR								; 配置BP位，选择AUD开启时的模式，这里选择TONE模式				
+	lda		#$ff
+	sta		AUD0
+
+	ENDM
+
+
+F_Port_Init		MACRO
+	lda		#$04								; PA2作唤醒
+	sta		PA_WAKE
+	lda		#$04
+	sta		PA_DIR
+	lda		#$04
+	sta		PA
+	smb4	IER									; 打开PA口外部中断
+
+	lda		#$0
+	sta		PC_DIR								; PC配置为输出
+	lda		#$7e
+	sta		PC									; 按键口全输出高，背光口输出低
+
+	lda		PB
+	and		#$b7
+	sta		PB
+
+	lda		#C_PB2S								; PB2作PP声音输出
+	sta		PADF0
+
+	ENDM
+
+
+F_Timer_Init	MACRO
+	rmb1	IER									; 关TMR0、1定时器中断
+	rmb1	IFR									; 清除TMR0、1中断标志位
+	rmb2	IER
+	rmb2	IFR
+	rmb0	TMRC								; 关闭TMR0
+	rmb1	TMRC								; 关闭TMR1
+
+	; TIM2时钟源DIV,Fsub 64分频512Hz，关闭定时器同步
+	lda		#C_Asynchronous+C_DIVC_Fsub_64
+	sta		DIVC								; 关闭定时器同步，DIV时钟源为Fsub/64(512Hz)
+
+	lda		#$0									; 配置TIM2频率为2Hz
+	sta		TMR2
+
+	lda		IER									; 开定时器2中断
+	ora		#C_TMR2I
+	sta		IER
+
+	lda		#C_TMR2ON
+	sta		TMRC								; 初始化只开TIM2用于走时
+
+	ENDM
+
+
+F_LCD_Init		MACRO
+	lda		#C_BIS_C_1_2+C_HIS_Strong
+	sta		LCD_CTRL
+
+	lda		#C_ENCH_Enable+C_LCDIS_Rate_2+C_COM_3_29
+	sta		LCD_COM
+
+	lda		#C_PD30S+C_PD74S
+	sta		PC_SEG
+
+	LCD_ON
+	jsr		F_ClearScreen						; 清屏
+
+	ENDM
