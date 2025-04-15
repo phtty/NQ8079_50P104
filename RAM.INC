@@ -30,7 +30,7 @@ Clock_Flag				DS		1
 ;bit0 = 1 闹钟触发
 ;bit1 = 1 响闹模式
 ;bit2 = 1 贪睡模式
-;bit3 = 1 
+;bit3 = 1 持续响闹模式
 
 Alarm_Switch			DS		1
 ;bit0 = 1 闹钟1开启

@@ -5,7 +5,7 @@ F_BeepManage:
 L_Beeping:
 	rmb3	Timer_Flag
 
-	bbr4	Clock_Flag,L_SerialBeep_Mode
+	bbr3	Clock_Flag,L_SerialBeep_Mode
 	lda		Beep_Serial							; 持续响铃模式
 	eor		#01B								; Beep_Serial翻转第一位
 	sta		Beep_Serial
@@ -38,22 +38,39 @@ NoLouding:
 LoudHandle_Start:
 	rmb1	Time_Flag
 
-	nop											; 根据响闹的秒数进行判断
-	;lda		#8									; 闹钟响闹的序列为8，4声
-	;sta		Beep_Serial
-	
+	lda		Louding_Counter						; 根据响闹的秒数判断响几声
+	cmp		#10
+	bcs		No_LoudLevel_1
+	rmb3	Clock_Flag							; 切换到序列响铃模式
+	lda		#2
+	sta		Beep_Serial							; 前10S响1声
+	bra		LoudCounter_Juge
+No_LoudLevel_1:
+	cmp		#20
+	bcs		No_LoudLevel_2
+	lda		#4
+	sta		Beep_Serial							; 10S~20S响2声
+	bra		LoudCounter_Juge
+No_LoudLevel_2:
+	cmp		#30
+	bcs		No_LoudLevel_3
+	lda		#8
+	sta		Beep_Serial							; 20S~30S响4声
+	bra		LoudCounter_Juge
+No_LoudLevel_3:
+	smb3	Clock_Flag							; 30S以后切换到持续响铃模式
 LoudCounter_Juge:
-	inc		Louding_Counter
 	lda		Louding_Counter
 	cmp		#60
 	bcs		L_CloseLoud							; 响闹计时达到60S后关闭
+	inc		Louding_Counter
 	rts
 
 L_CloseLoud:									; 结束并关闭响闹
 	lda		#0
 	sta		Louding_Counter
 	PWM_OFF
-	PB2_PB2_NOMS									; PB2选择NMOS输出1避免漏电
+	PB2_PB2_NOMS								; PB2选择NMOS输出1避免漏电
 	smb2	PB
 
 	rmb3	Timer_Switch						; 关闭21Hz计时
@@ -62,4 +79,5 @@ L_CloseLoud:									; 结束并关闭响闹
 	rmb1	Time_Flag
 	rmb1	Clock_Flag							; 复位响闹模式和响闹加时1S
 	rmb0	Clock_Flag							; 复位闹钟触发标志
+	rmb3	Clock_Flag							; 复位持续响闹标志
 	rts

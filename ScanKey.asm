@@ -71,13 +71,12 @@ L_KeyExit:
 	rmb6	IER
 	rmb4	Timer_Switch						; 关闭42Hz、4Hz计时
 	rmb2	Timer_Switch
-
 KeepScan:
 	lda		#0									; 清理相关变量、标志位
 	sta		QuickAdd_Counter
 	sta		Key_Flag
 
-	nop											; 将PA和PC口还原回等待中断唤醒模式
+	jsr		F_PortWaitKey_Mode					; 将PA和PC口还原回等待中断唤醒模式
 
 	rmb4	IFR									; 复位标志位,避免中断开启时直接进入中断服务
 	smb4	IER									; 按键处理结束，重新开启PA口中断
@@ -171,15 +170,16 @@ L_Key_UniversalHandle:
 	lda		PC
 	and		#$0e
 	beq		No_KeySNZ
-	nop											; 若是顶键打断响闹则开启贪睡
+	smb2	Clock_Flag							; 若是顶键打断响闹则开启贪睡
 No_KeySNZ:
 	jsr		L_CloseLoud							; 打断响闹
 	pla
 	pla
 	jmp		L_KeyExit
 No_AlarmLouding:
-	bbr2	Clock_Flag,?No_AlarmSnooze			; 再判断是否需要打断贪睡
-	nop											; 打断贪睡
+	bbr2	Clock_Flag,?No_AlarmSnooze			; 无响闹时，再判断是否需要打断贪睡
+	rmb2	Clock_Flag							; 打断贪睡
+	jsr		L_CloseLoud							; 打断响闹
 	pla
 	pla
 	jmp		L_KeyExit
@@ -228,6 +228,36 @@ L_NoKeyA_Keep:
 	jsr		L_KeyExit
 	jsr		F_Display_Time
 	jsr		L_CloseLoud
+	rts
+
+
+
+; 按键矩阵设置为扫描模式
+F_PortScanKey_Mode:
+	lda		#$00
+	sta		PA_DIR
+	lda		#$04
+	sta		PA									; PA2设置输出高
+
+	lda		#$7e
+	sta		PC_DIR
+	lda		#$7e
+	sta		PC									; PC1~6设置下拉输入
+	rts
+
+
+; 按键矩阵设置为等待触发模式
+F_PortWaitKey_Mode:
+	lda		#$04
+	sta		PA_DIR
+	lda		#$04
+	sta		PA									; PA2设置下拉输入
+
+	lda		#$0
+	sta		PC_DIR
+	lda		PC
+	ora		#$7e
+	sta		PC									; PC1~6输出高
 	rts
 
 

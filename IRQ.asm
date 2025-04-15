@@ -46,7 +46,7 @@ I_PaIRQ_Handler:
 	rmb4	IER
 	smb4	Timer_Switch					; 打开快加定时，暂时关闭PA中断
 
-	nop										; 开始扫描按键将PA口设为输出，PC口设为输入
+	jsr		F_PortScanKey_Mode				; 开始扫描按键将PA口设为输出，PC口设为输入
 
 	jmp		L_EndIrq
 
