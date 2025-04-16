@@ -182,8 +182,14 @@ KeyC_Fuction:
 	lda		Alarm_Switch
 	eor		#%01
 	sta		Alarm_Switch
-	jsr		F_SymbolRegulate					; 开关闹钟
 
+	bne		Dis_Alarm							; 开启或关闭闹钟时，会显示或停止显示bell和Zz点
+	jsr		F_ClrBell
+	jsr		F_ClrZz
+	rts
+Dis_Alarm:
+	jsr		F_DisBell
+	jsr		F_DisZz
 	rts
 
 
@@ -222,6 +228,7 @@ L_Key_UniversalHandle:
 	smb2	Clock_Flag							; 若是顶键打断响闹则开启贪睡
 No_KeySNZ:
 	jsr		L_CloseLoud							; 打断响闹
+	jsr		F_DisZz
 	pla
 	pla
 	rts
@@ -229,6 +236,7 @@ No_AlarmLouding:
 	bbr2	Clock_Flag,?No_AlarmSnooze			; 无响闹时，再判断是否需要打断贪睡
 	rmb2	Clock_Flag							; 打断贪睡
 	jsr		L_CloseLoud							; 打断响闹
+	jsr		F_DisZz
 	pla
 	pla
 ?No_AlarmSnooze:

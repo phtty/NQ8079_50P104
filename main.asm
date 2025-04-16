@@ -42,8 +42,11 @@ L_Clear_Ram_Loop:
 	cli												; 开总中断
 
 	jsr		F_BootScreen
-
+	jsr		F_Display_Time
+	jsr		F_DisCol								; S点常亮
 ; 测试部分
+	;lda		#1
+	;sta		Alarm_Switch
 	bra		Global_Run
 
 
@@ -66,14 +69,11 @@ Status_Juge:
 
 	bra		MainLoop
 Status_DisTime:
-	jsr		F_Display_Time
 	bra		MainLoop
 Status_SetAlarm:
-	jsr		F_Display_Alarm
 	jsr		F_Is_KeyAKeep
 	bra		MainLoop
 Status_SetTime:
-	jsr		F_Display_Time
 	jsr		F_Is_KeyTKeep
 	bra		MainLoop
 
@@ -159,7 +159,7 @@ L_EndIrq:
 .BLKB	0FFFFH-$,0FFH							; 从当前地址到FFFF全部填充0xFF
 
 .ORG	0FFF8H
-	DB		C_RST_SEL+C_VOLT_V30+C_OMS0+C_PAIM
+	DB		C_RST_SEL+C_VOLT_V30+C_OMS0
 	DB		C_PB32IS+C_PROTB
 	DW		0FFFFH
 

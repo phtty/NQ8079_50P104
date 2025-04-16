@@ -21,8 +21,8 @@ L_Beep_Juge:
 	rts
 L_NoBeep_Serial_Mode:
 	PWM_OFF
-	PB2_PB2_NOMS								; PB2选择NMOS输出1避免漏电
-	smb2	PB
+	PB2_PB2_NOMS								; PB2选择NMOS输出0避免漏电
+	rmb2	PB
 	rts
 
 

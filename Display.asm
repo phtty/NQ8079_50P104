@@ -124,20 +124,10 @@ F_UnDisplay_D2_3:								; 闪烁时取消显示用的函数
 
 
 
-F_SymbolRegulate:								; 几个常亮点的管理
-	jsr		F_DisCol							; S点常亮
-
-	lda		Alarm_Switch
-	bne		Dis_Bell
-	jsr		F_ClrBell
-	bra		L_ZzDot_Juge
-Dis_Bell:
-	jsr		F_DisBell
-
-L_ZzDot_Juge:
+F_SymbolRegulate:								; 几个Zz点的管理
 	lda		Clock_Flag
 	and		#%0110
-	beq		L_SymbolZz_Normal					; 如果非贪睡或响闹状态，则不闪Zz点
+	beq		L_SymbolDisOver						; 如果非贪睡或响闹状态，则不闪Zz点
 	bbs1	Symbol_Flag,L_SymbolDis
 	rts
 L_SymbolDis:
@@ -148,15 +138,7 @@ L_SymbolDis:
 L_ALM_Dot_Clr:
 	rmb0	Symbol_Flag							; Zz点1S标志
 	jsr		F_ClrZz
-	rts
-
-L_SymbolZz_Normal:								; 非响闹和贪睡模式下Zz点的控制
-	lda		Alarm_Switch
-	bne		Dis_Zz
-	jsr		F_ClrZz
-	rts
-Dis_Zz:
-	jsr		F_DisZz
+L_SymbolDisOver:
 	rts
 
 

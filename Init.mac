@@ -6,19 +6,19 @@ F_Init_SystemRam	MACRO						; 系统内存初始化
 	sta		R_Time_Hour
 	lda		#00
 	sta		R_Time_Min
-	lda		#00
+	lda		#55
 	sta		R_Time_Sec
 
-	lda		#06
+	lda		#12
 	sta		R_Alarm_Hour
-	lda		#00
+	lda		#01
 	sta		R_Alarm_Min
 
 	ENDM
 
 
 F_Beep_Init		MACRO
-	PB2_PB2_COMS								; PP(PB2)初始化成IO输出，避免漏电
+	PB2_PB2_NOMS								; PP(PB2)初始化成IO输出，避免漏电
 	rmb2	PB
 
 	rmb2    DIVC								; 配置蜂鸣音调频率(占空比3/4)
@@ -34,7 +34,7 @@ F_Beep_Init		MACRO
 F_Port_Init		MACRO
 	lda		#$04								; PA2作唤醒
 	sta		PA_WAKE
-	lda		#$04
+	lda		#$84
 	sta		PA_DIR
 	lda		#$04
 	sta		PA
