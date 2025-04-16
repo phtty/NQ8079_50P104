@@ -6,12 +6,12 @@ F_Init_SystemRam	MACRO						; 系统内存初始化
 	sta		R_Time_Hour
 	lda		#00
 	sta		R_Time_Min
-	lda		#55
+	lda		#00
 	sta		R_Time_Sec
 
-	lda		#12
+	lda		#06
 	sta		R_Alarm_Hour
-	lda		#01
+	lda		#00
 	sta		R_Alarm_Min
 
 	ENDM
