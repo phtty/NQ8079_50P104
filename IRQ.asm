@@ -26,7 +26,7 @@ L_1Hz_Juge:
 	sta		Counter_1Hz
 	smb0	Timer_Flag
 	smb0	Symbol_Flag
-	smb4	Backlight_Flag
+	smb1	Backlight_Flag
 
 	lda		#$07
 	ora		Time_Flag
@@ -69,7 +69,7 @@ L_4Hz_Juge:
 	bbr2	Timer_Switch,LcdIRQ_Exit		; 4Hz计数开关
 	inc		Counter_4Hz
 	lda		Counter_4Hz
-	cmp		#4
+	cmp		#10
 	bcc		LcdIRQ_Exit
 	lda		#0
 	sta		Counter_4Hz

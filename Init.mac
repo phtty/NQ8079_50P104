@@ -14,8 +14,6 @@ F_Init_SystemRam	MACRO						; 系统内存初始化
 	lda		#00
 	sta		R_Alarm_Min
 
-	smb0	Clock_Flag							; 上电为12h模式
-
 	ENDM
 
 

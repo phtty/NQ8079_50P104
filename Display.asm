@@ -124,26 +124,39 @@ F_UnDisplay_D2_3:								; 闪烁时取消显示用的函数
 
 
 
-F_SymbolRegulate:								; 显示常亮点
-	jsr		L_ALMDot_Blink
-	rts
+F_SymbolRegulate:								; 几个常亮点的管理
+	jsr		F_DisCol							; S点常亮
 
+	lda		Alarm_Switch
+	bne		Dis_Bell
+	jsr		F_ClrBell
+	bra		L_ZzDot_Juge
+Dis_Bell:
+	jsr		F_DisBell
 
-; 贪睡时闪ALM点
-L_ALMDot_Blink:
-	bbr2	Clock_Flag,L_SymbolDis_Exit			; 如果非贪睡状态，则不进此子程序
-	bbs0	Symbol_Flag,L_SymbolDis
-L_SymbolDis_Exit:
+L_ZzDot_Juge:
+	lda		Clock_Flag
+	and		#%0110
+	beq		L_SymbolZz_Normal					; 如果非贪睡或响闹状态，则不闪Zz点
+	bbs1	Symbol_Flag,L_SymbolDis
 	rts
 L_SymbolDis:
-	rmb0	Symbol_Flag							; ALM点半S标志
-	bbs1	Symbol_Flag,L_ALM_Dot_Clr
-	jsr		F_DisAL
+	rmb1	Symbol_Flag							; Zz点半S标志
+	bbs0	Symbol_Flag,L_ALM_Dot_Clr
+	jsr		F_DisZz
+	rts
+L_ALM_Dot_Clr:
+	rmb0	Symbol_Flag							; Zz点1S标志
+	jsr		F_ClrZz
 	rts
 
-L_ALM_Dot_Clr:
-	rmb1	Symbol_Flag							; ALM点1S标志
-	jsr		F_ClrAL
+L_SymbolZz_Normal:								; 非响闹和贪睡模式下Zz点的控制
+	lda		Alarm_Switch
+	bne		Dis_Zz
+	jsr		F_ClrZz
+	rts
+Dis_Zz:
+	jsr		F_DisZz
 	rts
 
 
@@ -153,12 +166,6 @@ L_ALM_Dot_Clr:
 F_DisCol:
 	ldx		#lcd_COL
 	jsr		F_DisSymbol
-	rts
-
-; 灭秒点
-F_ClrCol:
-	ldx		#lcd_COL
-	jsr		F_ClrSymbol
 	rts
 
 ; 亮PM点
@@ -173,14 +180,26 @@ F_ClrPM:
 	jsr		F_ClrSymbol
 	rts
 
-; 亮AL点
-F_DisAL:
+; 亮Zz点
+F_DisZz:
+	ldx		#lcd_Zz
+	jsr		F_DisSymbol
+	rts
+
+; 灭Zz点
+F_ClrZz:
+	ldx		#lcd_Zz
+	jsr		F_ClrSymbol
+	rts
+
+; 亮Bell点
+F_DisBell:
 	ldx		#lcd_bell
 	jsr		F_DisSymbol
 	rts
 
-; 灭AL点
-F_ClrAL:
+; 灭Bell点
+F_ClrBell:
 	ldx		#lcd_bell
 	jsr		F_ClrSymbol
 	rts

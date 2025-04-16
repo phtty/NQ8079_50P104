@@ -41,6 +41,8 @@ L_Clear_Ram_Loop:
 
 	cli												; 开总中断
 
+	jsr		F_BootScreen
+
 ; 测试部分
 	bra		Global_Run
 
@@ -52,15 +54,15 @@ MainLoop:
 	;rmb4	SYSCLK
 Global_Run:											; 全局生效的功能处理
 	jsr		F_KeyHandler
-	jsr		F_Alarm_Handler							; 响闹判断
 	jsr		F_BeepManage
 	jsr		F_Backlight_Manage						; 背光管理
 	jsr		F_Time_Run								; 走时
+	jsr		F_Alarm_Handler							; 响闹判断
 	jsr		F_SymbolRegulate
 Status_Juge:
 	bbs0	Sys_Status_Flag,Status_DisTime
 	bbs1	Sys_Status_Flag,Status_SetAlarm
-	bbs2	Sys_Status_Flag,Status_SetClock
+	bbs2	Sys_Status_Flag,Status_SetTime
 
 	bra		MainLoop
 Status_DisTime:
@@ -68,9 +70,11 @@ Status_DisTime:
 	bra		MainLoop
 Status_SetAlarm:
 	jsr		F_Display_Alarm
+	jsr		F_Is_KeyAKeep
 	bra		MainLoop
-Status_SetClock:
+Status_SetTime:
 	jsr		F_Display_Time
+	jsr		F_Is_KeyTKeep
 	bra		MainLoop
 
 
@@ -148,6 +152,7 @@ L_EndIrq:
 .include	Backlight.asm
 .include	Time.asm
 .include	Alarm.asm
+.include	BootScreen.asm
 
 
 

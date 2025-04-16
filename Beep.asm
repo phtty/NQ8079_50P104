@@ -62,9 +62,13 @@ No_LoudLevel_3:
 LoudCounter_Juge:
 	lda		Louding_Counter
 	cmp		#60
-	bcs		L_CloseLoud							; 响闹计时达到60S后关闭
+	bcs		Louding_Overflow					; 响闹计时达到60S后关闭
 	inc		Louding_Counter
 	rts
+Louding_Overflow:
+	bbr0	Sys_Status_Flag,L_CloseLoud			
+	rmb6	IER
+	rmb3	Timer_Switch
 
 L_CloseLoud:									; 结束并关闭响闹
 	lda		#0

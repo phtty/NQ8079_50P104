@@ -30,7 +30,7 @@ Clock_Flag				DS		1
 ;bit0 = 1 闹钟触发
 ;bit1 = 1 响闹模式
 ;bit2 = 1 贪睡模式
-;bit3 = 1 持续响闹模式
+;bit3 = 1 蜂鸣持续
 
 Alarm_Switch			DS		1
 ;bit0 = 1 闹钟1开启
@@ -59,8 +59,8 @@ Time_Flag				DS		1
 ;bit6 = 1 
 
 Symbol_Flag				DS		1	; 符号操作
-;bit0 = 1 ALM点半S标志
-;bit1 = 1 ALM点1S标志
+;bit0 = 1 ALM点1S标志
+;bit1 = 1 ALM点半S标志
 
 Sys_Status_Flag			DS		1
 ;bit0 = 1 时钟显示
@@ -71,10 +71,16 @@ Sys_Status_Flag			DS		1
 ; 子模式的序号
 
 Key_Flag				DS		1
-;bit0 = 1 扫键标志位
-;bit1 = 1 首次触发
-;bit2 = 1 快加标志位
-;bit3 = 1 长按4Hz标志
+;bit0 = 1 扫键标志
+;bit1 = 1 首次触发标志
+;bit2 = 1 快加阻塞标志
+;bit3 = 1 快加间隔标志
+
+Depress_Detect			DS		1
+;bit0 = 1 H键开启检测
+;bit1 = 1 M键开启检测
+;bit2 = 1 B键开启检测
+;bit3 = 1 C键开启检测
 
 Backlight_Flag			DS		1
 ;bit0 = 1 开启背光

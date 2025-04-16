@@ -1,37 +1,3 @@
-; 切换时间设置模式
-SwitchState_ClockSet:
-	bbs0	Sys_Status_Flag,?TimeDisMode
-	bbs2	Sys_Status_Flag,?TimeSetMode
-	rts
-?TimeDisMode:
-	lda		#%100
-	sta		Sys_Status_Flag
-	jmp		F_Display_Time
-?TimeSetMode:
-	lda		#%001
-	sta		Sys_Status_Flag
-	jmp		F_Display_Time
-
-
-
-
-; 切换闹钟设置模式
-SwitchState_AlarmSet:
-	bbs0	Sys_Status_Flag,?TimeDisMode
-	bbs2	Sys_Status_Flag,?AlarmSetMode
-	rts
-?TimeDisMode:
-	lda		#%010
-	sta		Sys_Status_Flag
-	jmp		F_Display_Alarm
-?AlarmSetMode:
-	lda		#%001
-	sta		Sys_Status_Flag
-	jmp		F_Display_Time
-
-
-
-
 ; 时增加
 Time_HourAdd:
 	lda		R_Time_Hour

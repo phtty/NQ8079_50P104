@@ -1,23 +1,7 @@
-L_AlarmDot_Blink:
-	bbs1	Symbol_Flag,L_AlarmDot_Out
-	rts
-L_AlarmDot_Out:
-	rmb1	Symbol_Flag
-	bbs0	Symbol_Flag,No_ALDot_Display
-	jsr		F_DisAL
-	rts
-No_ALDot_Display:
-	rmb0	Symbol_Flag
-	jsr		F_ClrAL
-	rts
-
-
-
-
 ; 响闹判断
 F_Alarm_Handler:
-	bbr5	Time_Flag,Alarm_NoJuge				; 每S只进1次闹钟判断
-	rmb5	Time_Flag
+	bbr2	Time_Flag,Alarm_NoJuge				; 每S只进1次闹钟判断
+	rmb2	Time_Flag
 	lda		Alarm_Switch
 	bne		Is_Alarm_Trigger					; 没有任何闹钟开启则不会判断闹钟是否触发
 Alarm_NoJuge:
@@ -54,6 +38,7 @@ L_Alarm_Match_Handle:
 	smb0	Clock_Flag							; 同时满足小时和分钟的匹配，设置闹钟触发
 	smb1	Clock_Flag							; 开启响闹模式
 
+	smb6	IER									; 开启LCD中断
 	smb1	Time_Flag
 	smb3	Timer_Switch						; 开启21Hz蜂鸣间隔定时
 	lda		#0
@@ -75,7 +60,7 @@ Snooze_Handle:
 	dec		R_Snooze_Time
 	rts
 SnoozeAlarm_Trigger:
-	lda		#5
+	lda		#7
 	sta		R_Snooze_Time
 	rmb2	Clock_Flag
 	jmp		L_Alarm_Match_Handle
