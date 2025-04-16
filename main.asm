@@ -49,9 +49,9 @@ L_Clear_Ram_Loop:
 
 ; 状态机
 MainLoop:
-	;smb4	SYSCLK
-	;sta		HALT									; 休眠
-	;rmb4	SYSCLK
+	smb4	SYSCLK
+	sta		HALT									; 休眠
+	rmb4	SYSCLK
 Global_Run:											; 全局生效的功能处理
 	jsr		F_KeyHandler
 	jsr		F_BeepManage
