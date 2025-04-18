@@ -14,24 +14,24 @@ L_KeyScan:										; 长按处理部分
 	lda		Depress_Detect
 	beq		No_DepressDetect
 	bbr0	Depress_Detect,KeyH_NoDpreess		; 松键检测，阻塞按键功能，防止扫键时多次执行
-	bbs1	PC,KeyH_NoDpreess					; 键若压下则说明没有松键
+	bbs4	PC,KeyH_NoDpreess					; 键若压下则说明没有松键
 	jsr		QuickAdd_Reset
 	rmb0	Depress_Detect						; 复位H键松键检测
 
 KeyH_NoDpreess:
 	bbr1	Depress_Detect,KeyM_NoDpreess
-	bbs2	PC,KeyM_NoDpreess
+	bbs6	PC,KeyM_NoDpreess
 	jsr		QuickAdd_Reset						; 清空快加相关资源
 	rmb1	Depress_Detect						; 复位M键松键检测
 
 KeyM_NoDpreess:
 	bbr2	Depress_Detect,KeyB_NoDpreess
-	bbs3	PC,KeyB_NoDpreess
+	bbs5	PC,KeyB_NoDpreess
 	rmb2	Depress_Detect						; 复位B键松键检测
 
 KeyB_NoDpreess:
 	bbr3	Depress_Detect,No_DepressDetect
-	bbs4	PC,No_DepressDetect
+	bbs1	PC,No_DepressDetect
 	rmb3	Depress_Detect						; 复位C键松键检测
 
 No_DepressDetect:
@@ -41,25 +41,25 @@ No_DepressDetect:
 	bra		L_KeyExit
 
 L_KeyHandle:
-	bbr1	PC,No_KeyHTrigger					; 由于跳转指令寻址能力的问题，这里采用jmp进行跳转
+	bbr4	PC,No_KeyHTrigger					; 由于跳转指令寻址能力的问题，这里采用jmp进行跳转
 	jmp		L_KeyHTrigger						; H键触发
 No_KeyHTrigger:
-	bbr2	PC,No_KeyMTrigger
+	bbr6	PC,No_KeyMTrigger
 	jmp		L_KeyMTrigger						; M键触发
 No_KeyMTrigger:
-	bbr3	PC,No_KeyBTrigger
+	bbr5	PC,No_KeyBTrigger
 	jmp		L_KeyBTrigger						; B键触发
 No_KeyBTrigger:
-	bbr4	PC,No_KeyCTrigger
+	bbr1	PC,No_KeyCTrigger
 	jmp		L_KeyCTrigger						; C键触发
 No_KeyCTrigger:
 	lda		PC
-	and		#$60
-	cmp		#$20
+	and		#$0c
+	cmp		#$08
 	bne		No_KeyATrigger
 	jmp		L_KeyATrigger						; A键触发
 No_KeyATrigger:
-	cmp		#$40
+	cmp		#$04
 	bne		L_KeyExit
 	jmp		L_KeyTTrigger						; T键触发
 
@@ -223,7 +223,7 @@ L_Key_UniversalHandle:
 	bbr1	Clock_Flag,No_AlarmLouding
 
 	lda		PC
-	and		#$0e
+	and		#$70
 	beq		No_KeySNZ
 	smb2	Clock_Flag							; 若是顶键打断响闹则开启贪睡
 No_KeySNZ:
@@ -260,7 +260,7 @@ L_Key_Backlight:
 F_Is_KeyTKeep:
 	bbr2	Sys_Status_Flag,L_QA_KeyA_NoJuge
 	bbs3	Key_Flag,L_QA_KeyT_NoJuge			; 有快加时不退出
-	bbr6	PC,L_NoKeyT_Keep
+	bbr2	PC,L_NoKeyT_Keep
 L_QA_KeyT_NoJuge:
 	rts
 L_NoKeyT_Keep:
@@ -273,7 +273,7 @@ L_NoKeyT_Keep:
 F_Is_KeyAKeep:
 	bbr1	Sys_Status_Flag,L_QA_KeyA_NoJuge
 	bbs3	Key_Flag,L_QA_KeyA_NoJuge			; 有快加时不退出
-	bbr5	PC,L_NoKeyA_Keep
+	bbr3	PC,L_NoKeyA_Keep
 L_QA_KeyA_NoJuge:
 	rts
 L_NoKeyA_Keep:

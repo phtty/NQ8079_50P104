@@ -45,8 +45,6 @@ L_Clear_Ram_Loop:
 	jsr		F_Display_Time
 	jsr		F_DisCol								; S点常亮
 ; 测试部分
-	;lda		#1
-	;sta		Alarm_Switch
 	bra		Global_Run
 
 
