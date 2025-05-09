@@ -5,6 +5,7 @@ F_BootScreen:
 	rmb1	Timer_Flag
 L_BootScreen_Loop:								; …œµÁ»´œ‘2S
 	bbr1	Timer_Flag,L_BootScreen_Loop
+	rmb1	Timer_Flag
 	inc		P_Temp
 	lda		P_Temp
 	cmp		#4

@@ -66,6 +66,7 @@ LoudCounter_Juge:
 	inc		Louding_Counter
 	rts
 Louding_Overflow:
+	jsr		F_DisZz
 	bbr0	Sys_Status_Flag,L_CloseLoud			
 	rmb6	IER
 	rmb3	Timer_Switch

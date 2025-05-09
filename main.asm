@@ -45,11 +45,13 @@ L_Clear_Ram_Loop:
 	jsr		F_Display_Time
 	jsr		F_DisCol								; S点常亮
 ; 测试部分
+	smb0	Alarm_Switch
 	bra		Global_Run
 
 
 ; 状态机
 MainLoop:
+	bbs1	Clock_Flag,Global_Run					; 当响闹时，不进入休眠
 	smb4	SYSCLK
 	sta		HALT									; 休眠
 	rmb4	SYSCLK

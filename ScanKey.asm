@@ -292,7 +292,8 @@ F_PortScanKey_Mode:
 
 	lda		#$7e
 	sta		PC_DIR
-	lda		#$7e
+	lda		PC
+	ora		#$7e
 	sta		PC									; PC1~6设置下拉输入
 	rts
 

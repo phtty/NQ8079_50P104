@@ -124,7 +124,7 @@ F_UnDisplay_D2_3:								; 闪烁时取消显示用的函数
 
 
 
-F_SymbolRegulate:								; 几个Zz点的管理
+F_SymbolRegulate:								; Zz点的管理
 	lda		Clock_Flag
 	and		#%0110
 	beq		L_SymbolDisOver						; 如果非贪睡或响闹状态，则不闪Zz点
